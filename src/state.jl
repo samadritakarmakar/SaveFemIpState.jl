@@ -60,7 +60,7 @@ function updateIpStateDict!(data::T1, stateDict::Dict{Tuple{Int64, Int64}, T2},
 end
 
 """
-This function creates a Dictionary of type State to store the state of the material.
+This function creates a Dictionary of a give Type to store the state of the material.
 
     stateDict = createIpStateDict(type)
 """
