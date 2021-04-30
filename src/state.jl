@@ -19,7 +19,7 @@ If they don't exist, it just fills the state varibles with zeros.
 
     data = getState!(data, stateDict, elementNo, integrationPt)
 """
-function getState!(data::T, stateDict::Dict{Tuple{Int64, Int64}, IpStateSingle},
+function getIpState!(data::T, stateDict::Dict{Tuple{Int64, Int64}, IpStateSingle},
     elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
@@ -33,7 +33,7 @@ function getState!(data::T, stateDict::Dict{Tuple{Int64, Int64}, IpStateSingle},
     return data
 end
 
-function getState!(data::Array{T,N}, stateDict::Dict{Tuple{Int64, Int64}, IpStateArray},
+function getIpState!(data::Array{T,N}, stateDict::Dict{Tuple{Int64, Int64}, IpStateArray},
     elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real, N}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
@@ -65,11 +65,11 @@ This function creates a Dictionary of type State to store the state of the mater
     stateDict = createIpStateDict(type)
 """
 
-function createStateDict(T::Type)
+function createIpStateDict(T::Type)
     return Dict{Tuple{Int64, Int64}, T}()
 end
 
-function updateStateDict!(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState},
+function updateIpStateDict!(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState},
     stateDictBuffer::Dict{Tuple{Int64, Int64}, AbstractIpState})
     merge!(stateDict, stateDictBuffer)
 end
