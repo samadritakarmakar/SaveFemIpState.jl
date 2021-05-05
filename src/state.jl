@@ -7,7 +7,7 @@ end
 
 """This structure saves the state of the material."""
 struct IpStateArray{T<:Real, N} <:AbstractIpState
-    data::Array{T, N}
+    data::AbstractArray{T, N}
 end
 
 """
@@ -33,7 +33,7 @@ function getIpState!(data::T, stateDict::Dict{Tuple{Int64, Int64}, IpStateSingle
     return data
 end
 
-function getIpState!(data::Array{T,N}, stateDict::Dict{Tuple{Int64, Int64}, IpStateArray},
+function getIpState!(data::AbstractArray{T,N}, stateDict::Dict{Tuple{Int64, Int64}, IpStateArray},
     elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real, N}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
