@@ -69,7 +69,7 @@ function createIpStateDict(T::Type)
     return Dict{Tuple{Int64, Int64}, T}()
 end
 
-function updateIpStateDict!(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState},
+function updateStateDict!(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState},
     stateDictBuffer::Dict{Tuple{Int64, Int64}, AbstractIpState})
     merge!(stateDict, stateDictBuffer)
 end
