@@ -1,17 +1,11 @@
-abstract type AbstractIpState end
-
 """This structure saves the state of the material."""
-struct IpStateSingle{T<:Real} <:AbstractIpState
+struct IpStateSingle{T<:Real}
     data::T
 end
 
 """This structure saves the state of the material."""
-struct IpStateArray{T<:Real, N} <:AbstractIpState
+struct IpStateArray{T<:Real, N}
     data::AbstractArray{T, N}
-end
-
-struct IpState{T} <:AbstractIpState
-    data::T
 end
 
 """
@@ -47,23 +41,6 @@ function getIpState!(data::AbstractArray{T,N}, stateDict::Dict{Tuple{Int64, Int6
     return data
 end
 
-"""This function gets the state of the material, If they exist in the Dictionary 
-for the given material/integration point in the given element,
-it updates the data with the available data in stateDict.
-If they don't exist, it returns the fallback variable. 
-The fallback data is mandatory for this reason.
-
-    data = getState(stateDict, fallback, elementNo, integrationPt)"""
-
-function getIpState(stateDict::Dict{Tuple{Int64, Int64}, T}, fallback::T, 
-    elementNo::Int64= 1, integrationPt::Int64=1) where {T}
-
-    if (elementNo, integrationPt) ∈ keys(stateDict)
-        return stateDict[elementNo, integrationPt]
-    end
-    return fallback
-end
-
 """
 This function updates the StateDict according to the passed data a specific element number and
 an integration point within the given element.
@@ -73,12 +50,6 @@ an integration point within the given element.
 function updateIpStateDict!(data::T1, stateDict::Dict{Tuple{Int64, Int64}, T2},
     elementNo::Int64= 1, integrationPt::Int64=1) where {T1, T2}
     stateDict[elementNo, integrationPt] = T2(data)
-    return nothing
-end
-
-function updateIpStateDict!(data::T1, stateDict::Dict{Tuple{Int64, Int64}, T1},
-    elementNo::Int64= 1, integrationPt::Int64=1) where T1
-    stateDict[elementNo, integrationPt] = data
     return nothing
 end
 
