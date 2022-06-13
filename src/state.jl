@@ -51,8 +51,8 @@ The fallback data is mandatory for this reason.
 
     data = getState(stateDict, fallback, elementNo, integrationPt)"""
 
-function getIpState(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState}, fallback::T, 
-    elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real}
+function getIpState(stateDict::Dict{Tuple{Int64, Int64}, AnyIpState}, fallback::T, 
+    elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real, AnyIpState}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
         data = stateDict[elementNo, integrationPt].data
