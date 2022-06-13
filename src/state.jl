@@ -25,11 +25,9 @@ function getIpState!(data::T, stateDict::Dict{Tuple{Int64, Int64}, IpStateSingle
     if (elementNo, integrationPt) ∈ keys(stateDict)
         data = stateDict[elementNo, integrationPt].data
     return data
-    else
-        zero = zeros(typeof(data), 1)
-        data = zero[1]
-        return data
     end
+    zero = zeros(typeof(data), 1)
+    data = zero[1]
     return data
 end
 
@@ -39,12 +37,28 @@ function getIpState!(data::AbstractArray{T,N}, stateDict::Dict{Tuple{Int64, Int6
     if (elementNo, integrationPt) ∈ keys(stateDict)
         data .= stateDict[elementNo, integrationPt].data
     return data
-    else
-        zero = zeros(T, 1)
-        fill!(data, zero[1])
-        return data
     end
+    zero = zeros(T, 1)
+    fill!(data, zero[1])
     return data
+end
+
+"""This function gets the state of the material, If they exist in the Dictionary 
+for the given material/integration point in the given element,
+it updates the data with the available data in stateDict.
+If they don't exist, it returns the fallback variable. 
+The fallback data is mandatory for this reason.
+
+    data = getState(stateDict, fallback, elementNo, integrationPt)"""
+
+function getIpState(stateDict::Dict{Tuple{Int64, Int64}, AbstractIpState}, fallback::T, 
+    elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real}
+
+    if (elementNo, integrationPt) ∈ keys(stateDict)
+        data = stateDict[elementNo, integrationPt].data
+    return data
+    end
+    return fallback
 end
 
 """
