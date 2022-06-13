@@ -10,6 +10,10 @@ struct IpStateArray{T<:Real, N} <:AbstractIpState
     data::AbstractArray{T, N}
 end
 
+struct IpState{T} <:AbstractIpState
+    data::T
+end
+
 """
 This function has to be implemented by the user for different types that they wish to implement.
 This function gets the state of the material, If they exist in the Dictionary 
@@ -51,12 +55,11 @@ The fallback data is mandatory for this reason.
 
     data = getState(stateDict, fallback, elementNo, integrationPt)"""
 
-function getIpState(stateDict::Dict{Tuple{Int64, Int64}, AnyIpState}, fallback::T, 
-    elementNo::Int64= 1, integrationPt::Int64=1) where {T <:Real, AnyIpState}
+function getIpState(stateDict::Dict{Tuple{Int64, Int64}, T}, fallback::T, 
+    elementNo::Int64= 1, integrationPt::Int64=1) where {T}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
-        data = stateDict[elementNo, integrationPt].data
-    return data
+        return stateDict[elementNo, integrationPt].data
     end
     return fallback
 end
@@ -70,6 +73,12 @@ an integration point within the given element.
 function updateIpStateDict!(data::T1, stateDict::Dict{Tuple{Int64, Int64}, T2},
     elementNo::Int64= 1, integrationPt::Int64=1) where {T1, T2}
     stateDict[elementNo, integrationPt] = T2(data)
+    return nothing
+end
+
+function updateIpStateDict!(data::T1, stateDict::Dict{Tuple{Int64, Int64}, T1},
+    elementNo::Int64= 1, integrationPt::Int64=1) where T1
+    stateDict[elementNo, integrationPt] = data
     return nothing
 end
 
