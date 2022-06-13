@@ -59,7 +59,7 @@ function getIpState(stateDict::Dict{Tuple{Int64, Int64}, T}, fallback::T,
     elementNo::Int64= 1, integrationPt::Int64=1) where {T}
 
     if (elementNo, integrationPt) ∈ keys(stateDict)
-        return stateDict[elementNo, integrationPt].data
+        return stateDict[elementNo, integrationPt]
     end
     return fallback
 end
