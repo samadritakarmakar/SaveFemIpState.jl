@@ -17,6 +17,16 @@ function createIpStateDict(fallback::T) where T
     return IpState(fallback)
 end
 
+"""
+This function creates a Dictionary of the ipState.fallback Type to store the state of the material. 
+It copies the fallback of the given ipStateOther
+
+    stateDict = createIpStateDict(ipStateOther)
+"""
+function createIpStateDict(ipStateOther::IpState)
+    return createIpStateDict(ipStateOther.fallback)
+end
+
 """This function gets the state of the material, If they exist in the Dictionary 
 for the given material/integration point in the given element,
 if it exists in ipState.data Dictionary.
