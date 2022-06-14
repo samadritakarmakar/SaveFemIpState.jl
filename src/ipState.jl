@@ -1,4 +1,4 @@
-struct IpState{T}
+mutable struct IpState{T}
     data::Dict{Tuple{Int64, Int64}, T}
     fallback::T
 end
