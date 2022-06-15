@@ -49,7 +49,7 @@ If they don't exist, it returns the fallback variable.
     getState!(data, ipState, elementNo, integrationPt)"""
 
 function getIpState!(data::AbstractArray{T,N}, 
-    ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=1) where {T}
+    ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=1) where {T, N}
     if (elementNo, integrationPt) ∈ keys(ipState.data)
         data .= ipState.data[elementNo, integrationPt]
     end
