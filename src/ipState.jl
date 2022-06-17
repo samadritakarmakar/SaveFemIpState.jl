@@ -50,12 +50,17 @@ If they don't exist, it returns the fallback variable.
 
 function getIpState!(data::AbstractArray{T,N}, 
     ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=1) where {T, N}
+
     if (elementNo, integrationPt) ∈ keys(ipState.data)
         data .= ipState.data[elementNo, integrationPt]
-    end
+        return data
+    else
         data .= ipState.fallback
+        return data
+    end
     return nothing
 end
+
 
 """
 This function updates the ipState according to the passed data of
