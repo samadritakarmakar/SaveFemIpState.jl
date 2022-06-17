@@ -38,7 +38,7 @@ function getIpState(ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=
     if (elementNo, integrationPt) ∈ keys(ipState.data)
         return ipState.data[elementNo, integrationPt]
     end
-    return ipState.fallback
+    return deepcopy(ipState.fallback)
 end
 
 """This function gets the state of the material, If they exist in the Dictionary 
