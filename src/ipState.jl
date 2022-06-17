@@ -53,7 +53,7 @@ function getIpState!(data::AbstractArray{T,N},
     if (elementNo, integrationPt) ∈ keys(ipState.data)
         data .= ipState.data[elementNo, integrationPt]
     end
-    data .= ipState.fallback
+        data .= ipState.fallback
     return nothing
 end
 
@@ -69,7 +69,12 @@ function updateIpStateDict!(data::T, ipState::IpState{T},
     if (elementNo, integrationPt) ∉ keys(ipState.data)
         ipState.data[elementNo, integrationPt] = deepcopy(data)
     else
-        ipState.data[elementNo, integrationPt] .= data
+        try
+            ipState.data[elementNo, integrationPt] .= data
+        catch
+            ipState.data[elementNo, integrationPt] = data
+        end
+
     end
     return nothing
 end
