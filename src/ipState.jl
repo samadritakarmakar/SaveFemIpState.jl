@@ -86,7 +86,7 @@ end
 
 function updateStateDict!(ipState::IpState{T}, ipStateBuffer::IpState{T}) where T
     merge!(ipState.data, ipStateBuffer.data)
-    ipState.fallback = deepcopy(ipStateBuffer.fallback)
+    ipState.fallback .= ipStateBuffer.fallback
     return nothing
 end
 
