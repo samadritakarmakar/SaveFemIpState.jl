@@ -88,13 +88,13 @@ function updateStateDict!(ipState::IpState{T}, ipStateBuffer::IpState{T}) where 
     for i ∈ keys(ipStateBuffer.data)
         if i ∈ keys(ipState.data)
             try
-                ipState.data[i] .=ipStateBuffer.data
+                ipState.data[i] .=ipStateBuffer.data[i]
             catch
-                ipState.data[i] = ipStateBuffer.data
+                ipState.data[i] = ipStateBuffer.data[i]
             end
             
         else
-            ipState.data[i] = deepcopy(ipStateBuffer.data)
+            ipState.data[i] = deepcopy(ipStateBuffer.data[i])
         end
     end
     ipState.fallback .= ipStateBuffer.fallback
