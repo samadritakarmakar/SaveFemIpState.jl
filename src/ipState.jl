@@ -85,7 +85,18 @@ function updateIpStateDict!(data::T, ipState::IpState{T},
 end
 
 function updateStateDict!(ipState::IpState{T}, ipStateBuffer::IpState{T}) where T
-    merge!(ipState.data, ipStateBuffer.data)
+    for i ∈ keys(ipStateBuffer.data)
+        if i ∈ keys(ipState.data)
+            try
+                ipState.data[i] .=ipStateBuffer.data
+            catch
+                ipState.data[i] = ipStateBuffer.data
+            end
+            
+        else
+            ipState.data[i] = deepcopy(ipStateBuffer.data)
+        end
+    end
     ipState.fallback .= ipStateBuffer.fallback
     return nothing
 end
