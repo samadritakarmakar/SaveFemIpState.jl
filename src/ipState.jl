@@ -97,7 +97,11 @@ function updateStateDict!(ipState::IpState{T}, ipStateBuffer::IpState{T}) where 
             ipState.data[i] = deepcopy(ipStateBuffer.data[i])
         end
     end
-    ipState.fallback .= ipStateBuffer.fallback
+    try
+        ipState.fallback .= ipStateBuffer.fallback
+    catch
+        ipState.fallback = deepcopy(ipStateBuffer.fallback)
+    end
     return nothing
 end
 
