@@ -34,7 +34,7 @@ If they don't exist, it returns the fallback variable.
 
     data = getState(ipState, elementNo, integrationPt)"""
 
-function getIpState(ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=1) where {T}
+function getIpState(ipState::IpState, elementNo::Int64= 1, integrationPt::Int64=1)
     if (elementNo, integrationPt) ∈ keys(ipState.data)
         return ipState.data[elementNo, integrationPt]
     end
@@ -72,7 +72,9 @@ This function updates the ipState according to the passed data of
 function updateIpStateDict!(data::T, ipState::IpState{T},
     elementNo::Int64= 1, integrationPt::Int64=1) where T
     if (elementNo, integrationPt) ∉ keys(ipState.data)
-        ipState.data[elementNo, integrationPt] = deepcopy(data)
+        lock(lk[]) do
+            ipState.data[elementNo, integrationPt] = deepcopy(data)
+        end
     else
         try
             ipState.data[elementNo, integrationPt] .= data

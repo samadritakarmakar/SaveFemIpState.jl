@@ -1,5 +1,5 @@
 module SaveFemIpState
-
+const lk = Ref{ReentrantLock}(ReentrantLock())
 include("state.jl")
 include("ipState.jl")
 
