@@ -72,9 +72,7 @@ This function updates the ipState according to the passed data of
 function updateIpStateDict!(data::T, ipState::IpState{T},
     elementNo::Int64= 1, integrationPt::Int64=1) where T
     if (elementNo, integrationPt) ∉ keys(ipState.data)
-        lock(lk[]) do
-            ipState.data[elementNo, integrationPt] = deepcopy(data)
-        end
+        ipState.data[elementNo, integrationPt] = deepcopy(data)
     else
         try
             ipState.data[elementNo, integrationPt] .= data
