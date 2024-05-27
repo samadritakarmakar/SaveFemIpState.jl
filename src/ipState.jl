@@ -18,6 +18,22 @@ function createIpStateDict(fallback::T) where T
 end
 
 """
+This function creates a Dictionary of the fallback Type to store the state of the material.
+This function is to be used for multithreaded applications.
+
+    stateDict = createIpStateDict(fallback)
+"""
+function createIpStateDict(fallback::T, noOfElements::Int64, noOfIntPtsPerElement::Int64) where T
+    data = Dict{Tuple{Int64, Int64}, T}()
+    for elementNo ∈ 1:noOfElements
+        for ipNo ∈ 1:noOfIntPtsPerElement
+            data[elementNo, ipNo] = deepcopy(fallback)
+        end
+    end
+    return IpState(data, fallback)
+end
+
+"""
 This function creates a Dictionary of the ipState.fallback Type to store the state of the material. 
 It copies the fallback of the given ipStateOther
 
