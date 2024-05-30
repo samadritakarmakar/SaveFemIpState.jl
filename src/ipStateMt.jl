@@ -40,8 +40,7 @@ If they don't exist, it returns the fallback variable.
 
     data = getState(ipState, elementNo, integrationPt)"""
 
-function getIpState(ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1)
-    threadNo = ceil(Int64, elementNo/ipState.noOfElemmentsPerThread)
+function getIpState(ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid())
     if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
         return ipState.data[threadNo][elementNo, integrationPt]
     end
@@ -56,8 +55,7 @@ If they don't exist, it returns the fallback variable.
     getState!(data, ipState, elementNo, integrationPt)"""
 
 function getIpState!(data::AbstractArray{T,N}, 
-    ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1) where {T, N}
-    threadNo = ceil(Int64, elementNo/ipState.noOfElemmentsPerThread)
+    ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid()) where {T, N}
     if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
         data .= ipState.data[threadNo][elementNo, integrationPt]
         return data
@@ -77,8 +75,7 @@ This function updates the ipState according to the passed data of
 """
 
 function updateIpStateDict!(data::T, ipState::IpStateMultiThread{T},
-    elementNo::Int64= 1, integrationPt::Int64=1) where T
-    threadNo = ceil(Int64, elementNo/ipState.noOfElemmentsPerThread)
+    elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid()) where T
     if (elementNo, integrationPt) ∉ keys(ipState.data[threadNo])
         ipState.data[threadNo][elementNo, integrationPt] = deepcopy(data)
     else
