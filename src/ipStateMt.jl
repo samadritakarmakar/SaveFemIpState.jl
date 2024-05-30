@@ -1,26 +1,25 @@
 mutable struct IpStateMultiThread{T}
     data::Vector{Dict{Tuple{Int64, Int64}, T}}
     fallback::T
-    noOfElemmentsPerThread::Int64
+    noOfThreads::Int64
 end
 
-function IpStateMultiThread(fallback::T, totalNoOfElements::Int64, noOfThreads = Threads.nthreads()) where T
+function IpStateMultiThread(fallback::T, noOfThreads = Threads.nthreads()) where T
     data = Vector{Dict{Tuple{Int64, Int64}, T}}(undef, noOfThreads)
     for i ∈ 1:noOfThreads
         data[i] = Dict{Tuple{Int64, Int64}, T}()
     end
-    totalNoOfElementsPerThread = ceil(Int64, totalNoOfElements/noOfThreads)
-    IpStateMultiThread{T}(data, fallback, totalNoOfElementsPerThread)
+    IpStateMultiThread{T}(data, fallback, noOfThreads)
 end
 
 """
 This function creates a Dictionary of the fallback Type to store the state of the material.
 
-    stateDict = createIpStateDictMultiThread(fallback, totalNoOfElements)
+    stateDict = createIpStateDictMultiThread(fallback, noOfThreads)
 """
 
-function createIpStateDictMultiThread(fallback::T, totalNoOfElements::Int64) where T
-    return IpStateMultiThread(fallback, totalNoOfElements)
+function createIpStateDictMultiThread(fallback::T, noOfThreads::Int64) where T
+    return IpStateMultiThread(fallback, noOfThreads)
 end
 
 """
@@ -40,11 +39,17 @@ If they don't exist, it returns the fallback variable.
 
     data = getState(ipState, elementNo, integrationPt)"""
 
-function getIpState(ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid())
-    if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
-        return ipState.data[threadNo][elementNo, integrationPt]
+function getIpState(ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1)
+    found = false
+    for threadNo ∈ 1:ipState.noOfThreads
+        if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
+            found = true
+            return ipState.data[threadNo][elementNo, integrationPt]
+        end
     end
-    return deepcopy(ipState.fallback)
+    if !found
+        return deepcopy(ipState.fallback)
+    end
 end
 
 """This function gets the state of the material, If they exist in the Dictionary 
@@ -55,11 +60,16 @@ If they don't exist, it returns the fallback variable.
     getState!(data, ipState, elementNo, integrationPt)"""
 
 function getIpState!(data::AbstractArray{T,N}, 
-    ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid()) where {T, N}
-    if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
-        data .= ipState.data[threadNo][elementNo, integrationPt]
-        return data
-    else
+    ipState::IpStateMultiThread, elementNo::Int64= 1, integrationPt::Int64=1) where {T, N}
+    found = false
+    for threadNo ∈ 1:ipState.noOfThreads
+        if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
+            found = true
+            data .= ipState.data[threadNo][elementNo, integrationPt]
+            return data
+        end
+    end
+    if !found
         data .= ipState.fallback
         return data
     end
@@ -75,16 +85,21 @@ This function updates the ipState according to the passed data of
 """
 
 function updateIpStateDict!(data::T, ipState::IpStateMultiThread{T},
-    elementNo::Int64= 1, integrationPt::Int64=1, threadNo::Int64=Threads.threadid()) where T
-    if (elementNo, integrationPt) ∉ keys(ipState.data[threadNo])
-        ipState.data[threadNo][elementNo, integrationPt] = deepcopy(data)
-    else
-        try
-            ipState.data[threadNo][elementNo, integrationPt] .= data
-        catch
-            ipState.data[threadNo][elementNo, integrationPt] = data
+    elementNo::Int64= 1, integrationPt::Int64=1, currentThreadNo::Int64=Threads.threadid()) where T
+    found = false
+    for threadNo ∈ 1:ipState.noOfThreads
+        if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
+            found = true
+            try
+                ipState.data[threadNo][elementNo, integrationPt] .= data
+            catch
+                ipState.data[threadNo][elementNo, integrationPt] = data
+            end
+            return nothing
         end
-
+    end
+    if !found
+        ipState.data[currentThreadNo][elementNo, integrationPt] = deepcopy(data)
     end
     return nothing
 end
