@@ -18,8 +18,8 @@ This function creates a Dictionary of the fallback Type to store the state of th
     stateDict = createIpStateDictMultiThread(fallback, noOfThreads)
 """
 
-function createIpStateDictMultiThread(fallback::T, noOfThreads::Int64) where T
-    return IpStateMultiThread(fallback, noOfThreads)
+function createIpStateDictMultiThread(fallback::T) where T
+    return IpStateMultiThread(fallback)
 end
 
 """
@@ -29,7 +29,7 @@ It copies the fallback and the noOfElemmentsPerThread of the given ipStateOther
     stateDict = createIpStateDictMultiThread(ipStateOther)
 """
 function createIpStateDictMultiThread(ipStateOther::IpStateMultiThread)
-    return createIpStateDictMultiThread(ipStateOther.fallback, ipStateOther.noOfElemmentsPerThread)
+    return createIpStateDictMultiThread(ipStateOther.fallback)
 end
 
 """This function gets the state of the material, If they exist in the Dictionary 
