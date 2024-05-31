@@ -90,11 +90,11 @@ function updateIpStateDict!(data::T, ipState::IpStateMultiThread{T},
     for threadNo ∈ 1:ipState.noOfThreads
         if (elementNo, integrationPt) ∈ keys(ipState.data[threadNo])
             found = true
-            try
-                ipState.data[threadNo][elementNo, integrationPt] .= data
-            catch
-                ipState.data[threadNo][elementNo, integrationPt] = data
-            end
+            #try
+            #    ipState.data[threadNo][elementNo, integrationPt] .= data
+            #catch
+                ipState.data[threadNo][elementNo, integrationPt] = deepcopy(data)
+            #end
             return nothing
         end
     end
