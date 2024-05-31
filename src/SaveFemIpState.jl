@@ -14,5 +14,5 @@ export IpState
 #from common
 export getIpState!, getIpState, createIpStateDict, updateIpStateDict!, updateIpStateDict4rmBuffer!, updateStateDict!
 #from ipStateMt
-export IpStateMultiThread, createIpStateDictMultiThread
+export IpStateMultiThread, createIpStateDictMultiThread, getSingleMergedDict
 end # module

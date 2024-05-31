@@ -129,4 +129,11 @@ function updateIpStateDict4rmBuffer!(ipState::IpState{T}, ipStateBuffer::IpState
     updateStateDict!(ipState, ipStateBuffer)
 end=#
 
+function getSingleMergedDict(IpStateMultiThread{T}) where T
+    mergedDict = Dict{Tuple{Int64, Int64}, T}()
+    for thread ∈ 1:IpStateMultiThread.noOfThreads
+        merge!(mergedDict, IpStateMultiThread.data[thread])
+    end
+    return mergedDict
+end
 
